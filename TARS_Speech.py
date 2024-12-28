@@ -3,9 +3,10 @@ import speech_recognition as sr
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
     def __init__(self):
-        self.timeout = 1 # time to wait before no phrase registered
-        self.phrase_max = 5 # max phrase duration recognition length
+        self.timeout = 5 # time to wait before no phrase registered
+        self.duration = 30 # max phrase duration recognition length
         self.recognizer = sr.Recognizer() # init recognizer
+        self.calibrated = False
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -15,44 +16,48 @@ class TARS_Speech:
             print("Done.")
     
     def phonetic_match(self, text):
-        # use this function to map any phonetically similar words, or unrecognized words
-        if "TAURUS" in text:
-            text = text.replace("TAURUS", "TARS")
-        
+        # use this function to map any phonetically similar words, or unrecognized words (e.g. taurus -> TARS)
+        if "taurus" in text:
+            text = text.replace("taurus", "TARS")
         return text
+    
+    def command_reference(self, command):
+        # Command needs to be fed into llm, and then converted to text
+        if "step forward" in command:
+            return "step forward"
+        elif "turn left" in command:
+            return "turn left"
+        elif "turn right" in command:
+            return "turn right"
+        else:
+            print("TARS here. You called?")
 
     def listen_for_command(self):
         # Use the microphone for input
         with sr.Microphone() as source:
-            print("Listening for the activation keyword...")
+            print("Listening for command...")
             while True:
                 try:
-                    audio = self.recognizer.listen(source, 1, 5)
+                    audio = self.recognizer.listen(source, self.timeout, self.duration)
                     # Recognize the speech using Google Speech Recognition
-                    command = self.phonetic_match(self.recognizer.recognize_google(audio).upper())
-                    print(f"Recognized command: {command}")
-                    if "TARS" in command: # check for "TARS," if yes then go to another fxn
-                        print("TARS here, what can I do for you?")
-                        # go to another function call
-                        break
-
-                    # Command needs to be fed into llm, and then converted to actual command
+                    command = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
+                    if "TARS" in command:
+                        action = self.command_reference(command)
+                        return action # action can be nonetype
 
                 except sr.WaitTimeoutError:
-                    # # Timeout occurred, continue listening
-                    # print("Listening timed out, waiting for new input...")
+                    # Add a timeout catch
                     continue
                 except sr.UnknownValueError:
-                    # print("Could not understand the audio")
+                    # print("Sorry, didn't quite catch that. Come again?")
                     continue
                 except sr.RequestError as e:
-                    # print(f"Error with the speech recognition service: {e}")
+                    print(f"Error with the speech recognition service: {e}")
                     continue
-
-def main():
-    speech_module = TARS_Speech()
-    speech_module.calibrate_microphone()
-    speech_module.listen_for_command()
-
-if __name__ == "__main__":
-    main()
+    
+    def run_speech_module(self):
+        if not self.calibrated:
+            self.calibrate_microphone()
+            self.calibrated = True
+        prompt = self.listen_for_command()
+        return prompt

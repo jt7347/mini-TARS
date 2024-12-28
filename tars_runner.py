@@ -1,105 +1,55 @@
-import evdev
+from TARS_Servo_Abstractor import TARS_Servo_Abstractor
+from TARS_Speech import TARS_Speech
 import time
-import TARS_Servo_Abstractor3
-import TARS_Servo_Controller3
-from evdev import InputDevice, categorize, ecodes
-import Adafruit_PCA9685
 
-pwm = Adafruit_PCA9685.PCA9685()
+# take keyboard inputs instead of bluetooth controller through SSH?
 
-#port
-pwm.set_pwm(3, 3, 610)
-pwm.set_pwm(4, 4, 570)
-pwm.set_pwm(5, 5, 570)
-#starboard
-pwm.set_pwm(6, 6, 200)
-pwm.set_pwm(7, 7, 200)
-pwm.set_pwm(8, 8, 240)
+class TARS_Runner:
+    def __init__(self):
+        self.abstractor = TARS_Servo_Abstractor()
+        self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
+        self.speech = TARS_Speech()
 
-# Set frequency to 60hz, good for servos.
-pwm.set_pwm_freq(60)
+        # port
+        self.controller.pwm.set_pwm(3, 3, self.controller.portMain) # portMain = 610
+        self.controller.pwm.set_pwm(4, 4, self.controller.portForearm) # portForearm = 570
+        # self.controller.pwm.set_pwm(5, 5, self.controller.portHand) # portHand = 570, for hand extendor?
+        
+        # starboard
+        self.controller.pwm.set_pwm(6, 6, self.starMain) # starMain = 200
+        self.controller.pwm.set_pwm(7, 7, self.starForearm) # starForearm = 200
+        # self.controller.pwm.set_pwm(8, 8, self.starHand) # starHand = 240, for hand extendor?
 
-gamepad = InputDevice('/dev/input/event3')
+        # self.toggle = True
+        # self.pose = False
+        
+        # initialize current action
+        self.queue = None
 
-lTrg = 37
-rTrg = 50
-upBtn = 46
-downBtn = 32
-lBtn = 18
-rBtn = 33
-xBtn = 23
-yBtn = 35
-aBtn = 36
-bBtn = 34
-minusBtn = 49
-plusBtn = 24
+    def handle_action(self, prompt):
+        # handle action here
+        if prompt == "step forward":
+            tts = "Roger. Taking a step forward."
+            self.abstractor.stepForward()
+        elif prompt == "turn left":
+            tts = "Roger. Turning left."
+            self.abstractor.turnLeft()
+        elif prompt == "turn right":
+            tts = "Roger. Turning right."
+            self.abstractor.turnRight()
+        else:
+            pass
 
-toggle = True
-pose = False
+    def start(self):
+        while True:
+            self.queue = self.speech.run_speech_module()
+            if self.queue is not None:
+                self.handle_action(self.queue)
 
-print(gamepad)
 
-for event in gamepad.read_loop():
-    if event.type == ecodes.EV_KEY:
-        if event.value == 1:
-            if event.code == lTrg:
-                print("Left Trigger")
-                if toggle == True:
-                    TARS_Servo_Controller3.portMainPlus()
-                elif toggle == False:
-                    TARS_Servo_Controller3.portMainMinus()
-            elif event.code == rTrg:
-                print("Right Trigger")
-                if toggle == True:
-                    TARS_Servo_Controller3.starMainPlus()
-                elif toggle == False:
-                    TARS_Servo_Controller3.starMainMinus()
-            elif event.code == upBtn:
-                print("Up - Step Forward")
-                TARS_Servo_Abstractor3.stepForward()
-            elif event.code == downBtn:
-                print("Down")
-                if pose == False:
-                    TARS_Servo_Abstractor3.pose()
-                    pose = True
-                elif pose == True:
-                    TARS_Servo_Abstractor3.unpose()
-                    pose = False
-            elif event.code == lBtn:
-                print("Left - Turn Left")
-                TARS_Servo_Abstractor3.turnLeft()
-            elif event.code == rBtn:
-                print("Right - Turn Right")
-                TARS_Servo_Abstractor3.turnRight()
-            elif event.code == xBtn:
-                print("X")
-                if toggle == True:
-                    TARS_Servo_Controller3.starForarmPlus()
-                elif toggle == False:
-                    TARS_Servo_Controller3.starForarmMinus()
-            elif event.code == yBtn:
-                print("Y")
-                if toggle == True:
-                    TARS_Servo_Controller3.portForarmPlus()
-                elif toggle == False:
-                    TARS_Servo_Controller3.portForarmMinus()
-            elif event.code == aBtn:
-                print("A")
-                if toggle == True:
-                    TARS_Servo_Controller3.starHandPlus()
-                elif toggle == False:
-                    TARS_Servo_Controller3.starHandMinus()
-            elif event.code == bBtn:
-                print("B")
-                if toggle == True:
-                    TARS_Servo_Controller3.portHandPlus()
-                elif toggle == False:
-                    TARS_Servo_Controller3.portHandMinus()
-            elif event.code == plusBtn:
-                print("+")
-                toggle = True
-            elif event.code == minusBtn:
-                print("-")
-                toggle = False
-        elif event.value == 0:
-            print("Stop")
+def main():
+    TARS = TARS_Runner()
+    TARS.start()
+
+if __name__ == "__main__":
+    main()
