@@ -1,4 +1,3 @@
-import time
 from TARS_Servo_Controller import TARS_Servo_Controller
 
 class TARS_Servo_Abstractor:

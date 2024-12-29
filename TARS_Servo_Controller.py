@@ -1,11 +1,10 @@
-from __future__ import division
 import time
 import Adafruit_PCA9685
 from threading import Thread
 
 class TARS_Servo_Controller:
     def __init__(self):
-        self.pwm = Adafruit_PCA9685.PCA9685(busnum=1) # Linux
+        self.pwm = Adafruit_PCA9685.PCA9685(busnum=1)
 
         # Set frequency to 60hz, good for servos.
         self.pwm.set_pwm_freq(60)
