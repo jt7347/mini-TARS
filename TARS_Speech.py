@@ -14,7 +14,7 @@ class TARS_Speech:
         self.rate = 44100
         self.chunk = 1024
         self.channels = 1
-        self.noise_threshold = 500 # test value
+        self.noise_threshold = 5000 # test value
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -55,7 +55,6 @@ class TARS_Speech:
             # Convert raw data to numpy array for amplitude check
             test_audio = np.frombuffer(data, dtype=np.int16)
             max_amplitude = np.max(np.abs(test_audio))  # Find maximum amplitude in the chunk
-            
             # Check if the maximum amplitude exceeds the noise threshold
             if max_amplitude > self.noise_threshold:
                 last_sound_time = time.time()  # Reset the timer when sound is detected
@@ -106,3 +105,11 @@ class TARS_Speech:
             self.calibrated = True
         prompt = self.listen_for_command()
         return prompt
+
+# def main():
+    # TARS = TARS_Speech()
+    # out = TARS.run_speech_module()
+    # print(out)
+
+# if __name__ == "__main__":
+    # main()
