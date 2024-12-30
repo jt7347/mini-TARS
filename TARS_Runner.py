@@ -16,8 +16,8 @@ class TARS_Runner:
         # self.controller.pwm.set_pwm(5, 5, self.controller.portHand) # portHand = 570, for hand extendor?
         
         # starboard
-        self.controller.pwm.set_pwm(6, 6, self.starMain) # starMain = 200
-        self.controller.pwm.set_pwm(7, 7, self.starForearm) # starForearm = 200
+        self.controller.pwm.set_pwm(6, 6, self.controller.starMain) # starMain = 200
+        self.controller.pwm.set_pwm(7, 7, self.controller.starForearm) # starForearm = 200
         # self.controller.pwm.set_pwm(8, 8, self.starHand) # starHand = 240, for hand extendor?
 
         # self.toggle = True
