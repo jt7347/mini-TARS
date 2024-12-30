@@ -1,19 +1,20 @@
 import speech_recognition as sr
 import pyaudio
 import time
-import wave
+import numpy as np
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
     def __init__(self):
-        self.timeout = 5 # time to wait before no phrase registered
-        self.duration = 30 # max phrase duration recognition length
-        self.recognizer = sr.Recognizer() # init recognizer
+        self.timeout = 1  # time to wait before no phrase registered
+        self.duration = 30  # max phrase duration recognition length
+        self.recognizer = sr.Recognizer()  # init recognizer
         self.calibrated = False
         self.microphone = sr.Microphone(device_index=1)
         self.rate = 44100
         self.chunk = 1024
         self.channels = 1
+        self.noise_threshold = 500 # test value
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -37,7 +38,7 @@ class TARS_Speech:
         elif "turn right" in command:
             return "turn right"
         else:
-            return command # default to returning original value
+            return command  # default to returning original value
         
     def record_audio(self):
         max_duration = self.duration
@@ -51,18 +52,19 @@ class TARS_Speech:
             data = stream.read(self.chunk)
             frames.append(data)
             
-            # If sound is detected, reset the last_sound_time
-            if any(data):  # Check if there's any non-zero data (indicating sound)
-                last_sound_time = time.time()
+            # Convert raw data to numpy array for amplitude check
+            test_audio = np.frombuffer(data, dtype=np.int16)
+            max_amplitude = np.max(np.abs(test_audio))  # Find maximum amplitude in the chunk
+            
+            # Check if the maximum amplitude exceeds the noise threshold
+            if max_amplitude > self.noise_threshold:
+                last_sound_time = time.time()  # Reset the timer when sound is detected
 
             # Stop recording if no sound has been detected for 'timeout' seconds
             if time.time() - last_sound_time > timeout:
-                print(f"No sound detected for {timeout} seconds, stopping...")
                 break
-
             # Stop recording if max_duration is reached
             if time.time() - start_time > max_duration:
-                print(f"Max duration of {max_duration} seconds reached, stopping...")
                 break
 
         stream.stop_stream()
@@ -77,27 +79,26 @@ class TARS_Speech:
 
     def listen_for_command(self):
         # Use the microphone for input
-        with self.microphone as source:
-            while True:
-                print("Listening for command...")
-                try:
-                    audio = self.recognizer.listen(source, self.timeout, self.duration)
-                    # Recognize the speech using Google Speech Recognition
-                    command = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
-                    print(command)
-                    if "TARS" in command:
-                        action = self.command_reference(command)
-                        return action # action can be nonetype
+        while True:
+            print("Listening for command...")
 
-                except sr.WaitTimeoutError:
-                    # Add a timeout catch
-                    continue
-                except sr.UnknownValueError:
-                    # print("Sorry, didn't quite catch that. Come again?")
-                    continue
-                except sr.RequestError as e:
-                    print(f"Error with the speech recognition service: {e}")
-                    continue
+            # Record audio using the record_audio method
+            audio = self.record_audio()
+
+            # Recognize the speech from the recorded audio
+            try:
+                command = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
+                print(command)
+                if "TARS" in command:
+                    action = self.command_reference(command)
+                    return action  # action can be nonetype
+
+            except sr.UnknownValueError:
+                # print("Sorry, didn't quite catch that. Come again?")
+                continue
+            except sr.RequestError as e:
+                print(f"Error with the speech recognition service: {e}")
+                continue
     
     def run_speech_module(self):
         if not self.calibrated:
