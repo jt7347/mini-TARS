@@ -18,7 +18,7 @@ class TARS_Runner:
         # starboard
         self.controller.pwm.set_pwm(6, 6, self.controller.starMain) # starMain = 200
         self.controller.pwm.set_pwm(7, 7, self.controller.starForearm) # starForearm = 200
-        # self.controller.pwm.set_pwm(8, 8, self.starHand) # starHand = 240, for hand extendor?
+        # self.controller.pwm.set_pwm(8, 8, self.controller.starHand) # starHand = 240, for hand extendor?
 
         # self.toggle = True
         # self.pose = False
@@ -38,13 +38,16 @@ class TARS_Runner:
             tts = "Roger. Turning right."
             self.abstractor.turnRight()
         else:
-            pass
+            tts = "Didn't quite get that. Come again?" # default if no command is recognized
+        
+        return tts
 
     def start(self):
         while True:
             self.queue = self.speech.run_speech_module()
             if self.queue is not None:
-                self.handle_action(self.queue)
+                out = self.handle_action(self.queue)
+                print(out)
 
 
 def main():

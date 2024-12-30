@@ -7,10 +7,11 @@ class TARS_Speech:
         self.duration = 30 # max phrase duration recognition length
         self.recognizer = sr.Recognizer() # init recognizer
         self.calibrated = False
+        self.microphone = sr.Microphone(device_index=1,sample_rate=44100)
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
-        with sr.Microphone() as source:
+        with self.microphone as source:
             print("Calibrating microphone... Please wait.")
             self.recognizer.adjust_for_ambient_noise(source, duration=1)  # Optional: Adjust for ambient noise
             print("Done.")
@@ -30,17 +31,18 @@ class TARS_Speech:
         elif "turn right" in command:
             return "turn right"
         else:
-            print("TARS here. You called?")
+            return command # default to returning original value
 
     def listen_for_command(self):
         # Use the microphone for input
-        with sr.Microphone() as source:
-            print("Listening for command...")
+        with self.microphone as source:
             while True:
+                print("Listening for command...")
                 try:
                     audio = self.recognizer.listen(source, self.timeout, self.duration)
                     # Recognize the speech using Google Speech Recognition
                     command = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
+                    print(command)
                     if "TARS" in command:
                         action = self.command_reference(command)
                         return action # action can be nonetype
