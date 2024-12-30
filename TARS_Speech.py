@@ -10,18 +10,35 @@ class TARS_Speech:
         self.duration = 30  # max phrase duration recognition length
         self.recognizer = sr.Recognizer()  # init recognizer
         self.calibrated = False
-        self.microphone = sr.Microphone(device_index=1)
         self.rate = 44100
         self.chunk = 1024
         self.channels = 1
-        self.noise_threshold = 5000 # test value
+        self.noise_threshold = None # test value
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
-        with self.microphone as source:
-            print("Calibrating microphone... Please wait.")
-            self.recognizer.adjust_for_ambient_noise(source, duration=1)  # Optional: Adjust for ambient noise
-            print("Done.")
+        sample_num = 20 # check max amplitude 20 times then average and adjust noise threshold
+        total = 0
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=self.channels, rate=self.rate, input=True, frames_per_buffer=self.chunk)
+        frames = []
+        for i in range(sample_num):
+            data = stream.read(self.chunk)
+            frames.append(data)  
+            # Convert raw data to numpy array for amplitude check
+            test_audio = np.frombuffer(data, dtype=np.int16)
+            max_amplitude = np.max(np.abs(test_audio))  # Find maximum amplitude in the chunk
+            total += max_amplitude
+
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        noise_threshold = total / sample_num
+
+        self.noise_threshold = noise_threshold
+        print(noise_threshold)
+
     
     def phonetic_match(self, text):
         # use this function to map any phonetically similar words, or unrecognized words (e.g. taurus -> TARS)
@@ -78,9 +95,8 @@ class TARS_Speech:
 
     def listen_for_command(self):
         # Use the microphone for input
+        print("Listening for command...")
         while True:
-            print("Listening for command...")
-
             # Record audio using the record_audio method
             audio = self.record_audio()
 
@@ -106,10 +122,10 @@ class TARS_Speech:
         prompt = self.listen_for_command()
         return prompt
 
-# def main():
-    # TARS = TARS_Speech()
-    # out = TARS.run_speech_module()
-    # print(out)
+def main():
+    TARS = TARS_Speech()
+    out = TARS.run_speech_module()
+    print(out)
 
-# if __name__ == "__main__":
-    # main()
+if __name__ == "__main__":
+    main()
