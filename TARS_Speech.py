@@ -1,4 +1,7 @@
 import speech_recognition as sr
+import pyaudio
+import time
+import wave
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
@@ -7,7 +10,10 @@ class TARS_Speech:
         self.duration = 30 # max phrase duration recognition length
         self.recognizer = sr.Recognizer() # init recognizer
         self.calibrated = False
-        self.microphone = sr.Microphone(device_index=1,sample_rate=44100)
+        self.microphone = sr.Microphone(device_index=1)
+        self.rate = 44100
+        self.chunk = 1024
+        self.channels = 1
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -32,6 +38,42 @@ class TARS_Speech:
             return "turn right"
         else:
             return command # default to returning original value
+        
+    def record_audio(self):
+        max_duration = self.duration
+        timeout = self.timeout
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=self.channels, rate=self.rate, input=True, frames_per_buffer=self.chunk)
+        frames = []
+        start_time = time.time()  # Track the start time to enforce max_duration
+        last_sound_time = time.time()  # Track the last time sound was detected
+        while True:
+            data = stream.read(self.chunk)
+            frames.append(data)
+            
+            # If sound is detected, reset the last_sound_time
+            if any(data):  # Check if there's any non-zero data (indicating sound)
+                last_sound_time = time.time()
+
+            # Stop recording if no sound has been detected for 'timeout' seconds
+            if time.time() - last_sound_time > timeout:
+                print(f"No sound detected for {timeout} seconds, stopping...")
+                break
+
+            # Stop recording if max_duration is reached
+            if time.time() - start_time > max_duration:
+                print(f"Max duration of {max_duration} seconds reached, stopping...")
+                break
+
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        audio_data = b''.join(frames)
+        audio = sr.AudioData(audio_data, self.rate, 2)
+
+        return audio
+
 
     def listen_for_command(self):
         # Use the microphone for input
