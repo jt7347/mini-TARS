@@ -1,4 +1,5 @@
 from TARS_Servo_Controller import TARS_Servo_Controller
+import time
 
 class TARS_Servo_Abstractor:
 	def __init__(self):
@@ -21,4 +22,16 @@ class TARS_Servo_Abstractor:
 		self.controller.turn_left()
 		self.controller.down_to_neutral()
 		self.controller.neutral_from_left()
+
+def main():
+	TARS = TARS_Servo_Abstractor()
+	TARS.stepForward()
+	time.sleep(1)
+	TARS.turnLeft()
+	time.sleep(1)
+	TARS.turnRight
+	time.sleep(1)
+
+if __name__ == "__main__":
+	main()
     
