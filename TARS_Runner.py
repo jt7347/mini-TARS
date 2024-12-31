@@ -1,7 +1,5 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_Speech import TARS_Speech
-import time
-import subprocess
 
 # take keyboard inputs instead of bluetooth controller through SSH?
 
@@ -31,51 +29,25 @@ class TARS_Runner:
         # handle action here
         if prompt == "step forward":
             tts = "Roger. Taking a step forward."
+            self.speech.tts_piper(tts)
             self.abstractor.stepForward()
-            
-            # First process: echo 'text here'
-            echo_process = subprocess.Popen(
-                ["echo", tts], stdout=subprocess.PIPE
-            )
-
-            # Second process: piper
-            piper_process = subprocess.Popen(
-                ["piper", "--model", "voice_models/en_GB-northern_english_male-medium.onnx", "--noise-scale", "0.6", "--length-scale", "1.2", "--output-raw"],
-                stdin=echo_process.stdout,
-                stdout=subprocess.PIPE
-            )
-
-            # Third process: aplay
-            aplay_process = subprocess.Popen(
-                ["aplay", "-r", "22500", "-f", "S16_LE", "-t", "raw", "-"],
-                stdin=piper_process.stdout
-            )
-
-            # Wait for all processes to finish
-            print("generating audio")
-            echo_process.stdout.close()
-            piper_process.stdout.close()
-            aplay_process.wait()
-
-
         elif prompt == "turn left":
             tts = "Roger. Turning left."
+            self.speech.tts_piper(tts)
             self.abstractor.turnLeft()
         elif prompt == "turn right":
             tts = "Roger. Turning right."
+            self.speech.tts_piper(tts)
             self.abstractor.turnRight()
         else:
             tts = "Didn't quite get that. Come again?" # default if no command is recognized
-        
-        return tts
+            self.speech.tts_piper(tts)
 
     def start(self):
         while True:
             self.queue = self.speech.run_speech_module()
             if self.queue is not None:
-                out = self.handle_action(self.queue)
-                print(out)
-
+                self.handle_action(self.queue)
 
 def main():
     TARS = TARS_Runner()

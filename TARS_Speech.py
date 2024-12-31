@@ -2,6 +2,7 @@ import speech_recognition as sr
 import pyaudio
 import time
 import numpy as np
+import subprocess
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
@@ -18,7 +19,7 @@ class TARS_Speech:
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
-        sample_num = 100 # check max amplitude 20 times then average and adjust noise threshold
+        sample_num = 100 # check max amplitude 100 times then average and adjust noise threshold
         total = 0
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=self.channels, rate=self.rate, input=True, frames_per_buffer=self.chunk)
@@ -125,10 +126,37 @@ class TARS_Speech:
             self.calibrated = True
         prompt = self.listen_for_command()
         return prompt
+    
+    def tts_piper(self, tts):
+        # First process: echo 'text here'
+        print("Generating audio...")
+        
+        echo_process = subprocess.Popen(
+            ["echo", tts], stdout=subprocess.PIPE
+        )
+
+        # Second process: piper
+        piper_process = subprocess.Popen(
+            ["piper", "--model", "voice_models/en_GB-northern_english_male-medium.onnx", "--noise-scale", "0.6", "--length-scale", "1.2", "--output-raw"],
+            stdin=echo_process.stdout,
+            stdout=subprocess.PIPE
+        )
+
+        # Third process: aplay
+        aplay_process = subprocess.Popen(
+            ["aplay", "-r", "22500", "-f", "S16_LE", "-t", "raw", "-"],
+            stdin=piper_process.stdout
+        )
+
+        # Wait for all processes to finish
+        echo_process.stdout.close()
+        piper_process.stdout.close()
+        aplay_process.wait()
+
 
 def main():
     TARS = TARS_Speech()
-    out = TARS.run_speech_module()
+    output = TARS.run_speech_module()
 
 if __name__ == "__main__":
     main()
