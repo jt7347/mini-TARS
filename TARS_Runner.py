@@ -9,18 +9,10 @@ class TARS_Runner:
         self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
         self.speech = TARS_Speech()
 
-        # port
-        self.controller.pwm.set_pwm(3, 3, self.controller.portMain) # portMain = 610
-        self.controller.pwm.set_pwm(4, 4, self.controller.portForearm) # portForearm = 570
-        # self.controller.pwm.set_pwm(5, 5, self.controller.portHand) # portHand = 570, for hand extendor?
-        
-        # starboard
-        self.controller.pwm.set_pwm(6, 6, self.controller.starMain) # starMain = 200
-        self.controller.pwm.set_pwm(7, 7, self.controller.starForearm) # starForearm = 200
-        # self.controller.pwm.set_pwm(8, 8, self.controller.starHand) # starHand = 240, for hand extendor?
-
-        # self.toggle = True
-        # self.pose = False
+        # Reset drive and center lift servos
+        # self.controller.pwm.set_pwm(0, 0, self.controller.<VAL_HERE>) # VAL = ___
+        # self.controller.pwm.set_pwm(1, 1, self.controller.<VAL_HERE>) # VAL = ___
+        # self.controller.pwm.set_pwm(2, 2, self.controller.<VAL_HERE>) # VAL = ___
         
         # initialize current action
         self.queue = None

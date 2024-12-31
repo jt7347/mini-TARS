@@ -1,3 +1,4 @@
 PyAudio
 SpeechRecognition
 Adafruit_PCA9685
+numpy

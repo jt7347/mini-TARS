@@ -21,13 +21,4 @@ class TARS_Servo_Abstractor:
 		self.controller.turn_left()
 		self.controller.down_to_neutral()
 		self.controller.neutral_from_left()
-
-	def pose(self):
-		self.controller.neutral_to_down()
-		self.controller.torso_neutral_to_backwards()
-		self.controller.down_to_up()
-
-	def unpose(self):
-		self.controller.torso_return2()
-
     
