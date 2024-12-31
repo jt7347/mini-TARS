@@ -30,7 +30,7 @@ class TARS_Servo_Controller:
         print('setting center servo (0) Neutral --> Up position')
         while (height > self.upHeight):
             height = height - 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
         print('center servo (0) set to: Up position\n ')
 
@@ -46,8 +46,8 @@ class TARS_Servo_Controller:
         while (port < self.forwardPort):
             port = port + 1
             starboard = starboard - 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.0001)
         print('port and starboard servos (1)(2) set to: Forward position\n ')
 
@@ -58,8 +58,8 @@ class TARS_Servo_Controller:
         while (port > self.backPort):
             port = port - 1
             starboard = starboard + 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.0001)
         print('port and starboard servos (1)(2) set to: Forward position\n ')
 
@@ -70,12 +70,12 @@ class TARS_Servo_Controller:
         print('performing a torso bump\nsetting center servo (0) Up --> Down position FAST')
         while (height < self.downHeight):
             height = height + 2
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.000001)
         print('setting center servo (0) Down --> Up position FAST')
         while (height > self.upHeight):
             height = height - 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.0001)
         print('center servo (0) returned to Up position\n')
         
@@ -96,8 +96,8 @@ class TARS_Servo_Controller:
         while (port > self.neutralPort):
             port = port - 1
             starboard = starboard + 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.005)
         print('port and starboard servos (1)(2) set to: Neutral position\n ')
 
@@ -108,13 +108,13 @@ class TARS_Servo_Controller:
         # moving the torso down to create clearance for the rotation of the legs
         while (height < self.downHeight):
             height = height + 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.00005)
         # moving the torso up from down to neutral
         #time.sleep(.2)
         while (height > self.neutralHeight):
             height = height - 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.00001)
         print('center servo (0) set to: Neutral position\n ')
 
@@ -133,8 +133,8 @@ class TARS_Servo_Controller:
         while (port < self.neutralPort):
             port = port + 1
             starboard = starboard - 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.01)
         print('port and starboard servos (1)(2) set to: Neutral position\n ')
 
@@ -145,13 +145,13 @@ class TARS_Servo_Controller:
         # moving the torso down to create clearance for the rotation of the legs
         while (height < self.downHeight):
             height = height + 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
         # moving the torso up from down to neutral
         time.sleep(.25)
         while (height > self.neutralHeight):
             height = height - 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
         print('center servo (0) set to: Neutral position\n ')
 
@@ -162,7 +162,7 @@ class TARS_Servo_Controller:
         print('setting center servo (0) Neutral --> Down position')
         while (height < self.downHeight):
             height = height + 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
             
     def down_to_up(self):
@@ -170,7 +170,7 @@ class TARS_Servo_Controller:
         print('setting center servo (0) Down --> Neutral position')
         while (height > self.upHeight):
             height = height - 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
 
     def down_to_neutral(self):
@@ -178,7 +178,7 @@ class TARS_Servo_Controller:
         print('setting center servo (0) Down --> Neutral position')
         while (height > self.neutralHeight):
             height = height - 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
 
     def neutral_to_down(self):
@@ -186,7 +186,7 @@ class TARS_Servo_Controller:
         print('setting center servo (0) Down --> Neutral position')
         while (height < self.downHeight):
             height = height + 1
-            self.pwm.set_pwm(0, 0, height)
+            self.pwm.set_pwm(3, 3, height)
             time.sleep(0.001)
 
 
@@ -196,8 +196,8 @@ class TARS_Servo_Controller:
         while (port < self.forwardPort):
             port = port + 1
             starboard = starboard + 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.001)
             
     def turn_left(self):
@@ -206,8 +206,8 @@ class TARS_Servo_Controller:
         while (port > self.backPort):
             port = port - 1
             starboard = starboard - 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.001)
             
     def neutral_from_right(self):
@@ -216,11 +216,11 @@ class TARS_Servo_Controller:
         while (port > self.neutralPort):
             port = port - 1
             starboard = starboard - 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.005)
-        self.pwm.set_pwm(1, 1, self.neutralPort)
-        self.pwm.set_pwm(2, 2, self.neutralStarboard)
+        self.pwm.set_pwm(4, 4, self.neutralPort)
+        self.pwm.set_pwm(5, 5, self.neutralStarboard)
             
     def neutral_from_left(self):
         port = self.backPort
@@ -228,8 +228,8 @@ class TARS_Servo_Controller:
         while (port < self.neutralPort):
             port = port + 1
             starboard = starboard + 1
-            self.pwm.set_pwm(1, 1, port)
-            self.pwm.set_pwm(2, 2, starboard)
+            self.pwm.set_pwm(4, 4, port)
+            self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.005)
-        self.pwm.set_pwm(1, 1, self.neutralPort)
-        self.pwm.set_pwm(2, 2, self.neutralStarboard)
+        self.pwm.set_pwm(4, 4, self.neutralPort)
+        self.pwm.set_pwm(5, 5, self.neutralStarboard)
