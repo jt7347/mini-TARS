@@ -6,7 +6,7 @@ import numpy as np
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
     def __init__(self):
-        self.timeout = 1  # time to wait before no phrase registered
+        self.timeout = 2  # time to wait before no phrase registered
         self.duration = 30  # max phrase duration recognition length
         self.recognizer = sr.Recognizer()  # init recognizer
         self.calibrated = False
@@ -14,10 +14,11 @@ class TARS_Speech:
         self.chunk = 1024
         self.channels = 1
         self.noise_threshold = None # test value
+        self.noise_buffer = 1500 # pad on top of average ambient threshold
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
-        sample_num = 20 # check max amplitude 20 times then average and adjust noise threshold
+        sample_num = 100 # check max amplitude 20 times then average and adjust noise threshold
         total = 0
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=self.channels, rate=self.rate, input=True, frames_per_buffer=self.chunk)
@@ -28,16 +29,16 @@ class TARS_Speech:
             # Convert raw data to numpy array for amplitude check
             test_audio = np.frombuffer(data, dtype=np.int16)
             max_amplitude = np.max(np.abs(test_audio))  # Find maximum amplitude in the chunk
-            total += max_amplitude
+            total += float(max_amplitude)
 
         stream.stop_stream()
         stream.close()
         p.terminate()
 
         noise_threshold = total / sample_num
+        print("Noise Threshold: ", noise_threshold)
 
-        self.noise_threshold = noise_threshold
-        print(noise_threshold)
+        self.noise_threshold = noise_threshold + self.noise_buffer
 
     
     def phonetic_match(self, text):
@@ -75,12 +76,15 @@ class TARS_Speech:
             # Check if the maximum amplitude exceeds the noise threshold
             if max_amplitude > self.noise_threshold:
                 last_sound_time = time.time()  # Reset the timer when sound is detected
+                # print("recording")
 
             # Stop recording if no sound has been detected for 'timeout' seconds
             if time.time() - last_sound_time > timeout:
+                # print("No (more) audio detected")
                 break
             # Stop recording if max_duration is reached
             if time.time() - start_time > max_duration:
+                # print("Max prompt duration reached")
                 break
 
         stream.stop_stream()
@@ -95,7 +99,7 @@ class TARS_Speech:
 
     def listen_for_command(self):
         # Use the microphone for input
-        print("Listening for command...")
+        print("Listening...")
         while True:
             # Record audio using the record_audio method
             audio = self.record_audio()
@@ -103,8 +107,8 @@ class TARS_Speech:
             # Recognize the speech from the recorded audio
             try:
                 command = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
-                print(command)
                 if "TARS" in command:
+                    # print(command)
                     action = self.command_reference(command)
                     return action  # action can be nonetype
 
@@ -125,7 +129,6 @@ class TARS_Speech:
 def main():
     TARS = TARS_Speech()
     out = TARS.run_speech_module()
-    print(out)
 
 if __name__ == "__main__":
     main()
