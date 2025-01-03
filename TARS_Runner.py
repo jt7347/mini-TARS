@@ -33,6 +33,12 @@ class TARS_Runner:
             self.abstractor.turnRight()
         else:
             tts = "Didn't quite get that. Come again?" # default if no command is recognized
+            # tts = prompt
+            # pass tts into ollama pipeline
+            # get return
+            # pass return into piper for speech synthesis
+            # need to find a way to speed up speech synthesis...
+            # or thread synthesis with chat streaming
             self.speech.tts_piper(tts)
 
     def start(self):
