@@ -5,7 +5,7 @@ class TARS_Ollama:
     def __init__(self):
         # URL for the Ollama API
         self.url = "http://10.0.0.39:11434/api/chat"  # Replace with the correct IP
-        self.messages = None
+        self.messages = []
 
     # Function to ask a question and get a response
     def ask_question(self, question):
@@ -35,7 +35,7 @@ class TARS_Ollama:
             for part in response_parts:
                 try:
                     chunk = json.loads(part)
-                    complete_response += chunk['response']
+                    complete_response += chunk['message']['content']
                     if chunk['done']:  # If done is True, the response is complete
                         break
                 except json.JSONDecodeError:
@@ -55,10 +55,11 @@ class TARS_Ollama:
 # Main function to interact with the user
 def main():
     TARS = TARS_Ollama()
-    question = "Could you tell me about TARS, from the movie Interstellar?"  # Predefined question
-    answer = TARS.ask_question(question)
-    if answer:
-        print(answer)
+    while True:
+        question = input("Input: ")
+        answer = TARS.ask_question(question)
+        if answer:
+            print(answer)
 
 if __name__ == "__main__":
     main()

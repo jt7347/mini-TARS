@@ -3,6 +3,7 @@ import pyaudio
 import time
 import numpy as np
 import subprocess
+from TARS_Ollama import TARS_Ollama
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
@@ -16,6 +17,7 @@ class TARS_Speech:
         self.channels = 1
         self.noise_threshold = None # test value
         self.noise_buffer = 1500 # pad on top of average ambient threshold
+        self.ollama = TARS_Ollama()
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -57,7 +59,8 @@ class TARS_Speech:
         elif "turn right" in command:
             return "turn right"
         else:
-            return command  # default to returning original value
+            answer = self.ollama.ask_question(command)
+            return answer
         
     def record_audio(self):
         max_duration = self.duration
@@ -107,14 +110,13 @@ class TARS_Speech:
 
             # Recognize the speech from the recorded audio
             try:
-                command = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
-                if "TARS" in command:
-                    # print(command)
-                    action = self.command_reference(command)
+                prompt = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
+                print(prompt)
+                if "TARS" in prompt:
+                    action = self.command_reference(prompt)
                     return action  # action can be nonetype
 
             except sr.UnknownValueError:
-                # print("Sorry, didn't quite catch that. Come again?")
                 continue
             except sr.RequestError as e:
                 print(f"Error with the speech recognition service: {e}")

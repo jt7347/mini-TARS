@@ -17,28 +17,22 @@ class TARS_Runner:
         # initialize current action
         self.queue = None
 
-    def handle_action(self, prompt):
+    def handle_action(self, content):
         # handle action here
-        if prompt == "step forward":
+        if content == "step forward":
             tts = "Roger. Taking a step forward."
             self.speech.tts_piper(tts)
             self.abstractor.stepForward()
-        elif prompt == "turn left":
+        elif content == "turn left":
             tts = "Roger. Turning left."
             self.speech.tts_piper(tts)
             self.abstractor.turnLeft()
-        elif prompt == "turn right":
+        elif content == "turn right":
             tts = "Roger. Turning right."
             self.speech.tts_piper(tts)
             self.abstractor.turnRight()
         else:
-            tts = "Didn't quite get that. Come again?" # default if no command is recognized
-            # tts = prompt
-            # pass tts into ollama pipeline
-            # get return
-            # pass return into piper for speech synthesis
-            # need to find a way to speed up speech synthesis...
-            # or thread synthesis with chat streaming
+            tts = content # default if no command is recognized
             self.speech.tts_piper(tts)
 
     def start(self):
