@@ -1,8 +1,6 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_Speech import TARS_Speech
 
-# take keyboard inputs instead of bluetooth controller through SSH?
-
 class TARS_Runner:
     def __init__(self):
         self.abstractor = TARS_Servo_Abstractor()
@@ -20,19 +18,23 @@ class TARS_Runner:
     def handle_action(self, content):
         # handle action here
         if content == "step forward":
-            tts = "Roger. Taking a step forward."
+            tts = "Taking a step forward."
+            print(tts)
             self.speech.tts_piper(tts)
             self.abstractor.stepForward()
         elif content == "turn left":
-            tts = "Roger. Turning left."
+            tts = "Turning left."
+            print(tts)
             self.speech.tts_piper(tts)
             self.abstractor.turnLeft()
         elif content == "turn right":
-            tts = "Roger. Turning right."
+            tts = "Turning right."
+            print(tts)
             self.speech.tts_piper(tts)
             self.abstractor.turnRight()
         else:
             tts = content # default if no command is recognized
+            print(tts)
             self.speech.tts_piper(tts)
 
     def start(self):

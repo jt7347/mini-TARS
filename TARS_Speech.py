@@ -139,7 +139,7 @@ class TARS_Speech:
 
         # Second process: piper
         piper_process = subprocess.Popen(
-            ["piper", "--model", "voice_models/en_GB-northern_english_male-medium.onnx", "--noise-scale", "0.6", "--length-scale", "1.2", "--output-raw"],
+            ["piper", "--model", "voice_models/TARS.onnx", "--noise-scale", "0.6", "--length-scale", "1.2", "--output-raw"],
             stdin=echo_process.stdout,
             stdout=subprocess.PIPE
         )
