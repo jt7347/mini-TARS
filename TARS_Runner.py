@@ -34,7 +34,9 @@ class TARS_Runner:
             self.abstractor.turnRight()
         else:
             tts = content # default if no command is recognized
+            tts = self.speech.remove_linebreak(tts)
             print("TARS: ", tts)
+            tts = self.speech.format(tts)
             self.speech.tts_piper(tts)
 
     def start(self):

@@ -4,6 +4,7 @@ import time
 import numpy as np
 import subprocess
 from TARS_Ollama import TARS_Ollama
+import re
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
@@ -59,7 +60,7 @@ class TARS_Speech:
         elif "turn right" in command:
             return "turn right"
         else:
-            answer = self.ollama.ask_question(command).lower()
+            answer = self.ollama.ask_question(command)
             return answer
         
     def record_audio(self):
@@ -154,7 +155,15 @@ class TARS_Speech:
         echo_process.stdout.close()
         piper_process.stdout.close()
         aplay_process.wait()
+    
+    def remove_linebreak(self, tts):
+        tts = tts.replace("\n", " ")
+        # Replace multiple spaces with a single space
+        tts = " ".join(tts.split())
+        return tts.strip()
 
+    def format(self, tts):
+        return re.sub(r'\.\s*', '.\n', tts).strip().lower()
 
 def main():
     TARS = TARS_Speech()

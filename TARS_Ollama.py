@@ -16,7 +16,7 @@ class TARS_Ollama:
                 "role": "user",
                 "content": question
             }],
-            "max_tokens": 50,  # Adjust the number of tokens as needed
+            "max_tokens": 100,  # Adjust the number of tokens as needed
         }
 
         response = requests.post(self.url, json=data)
