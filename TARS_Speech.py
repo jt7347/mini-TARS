@@ -59,7 +59,7 @@ class TARS_Speech:
         elif "turn right" in command:
             return "turn right"
         else:
-            answer = self.ollama.ask_question(command)
+            answer = self.ollama.ask_question(command).lower()
             return answer
         
     def record_audio(self):
@@ -111,8 +111,8 @@ class TARS_Speech:
             # Recognize the speech from the recorded audio
             try:
                 prompt = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
-                print(prompt)
                 if "TARS" in prompt:
+                    print("Input: ", prompt)
                     action = self.command_reference(prompt)
                     return action  # action can be nonetype
 
@@ -131,7 +131,7 @@ class TARS_Speech:
     
     def tts_piper(self, tts):
         # First process: echo 'text here'
-        print("Generating audio...")
+        print("TARS: (Generating audio...)")
         
         echo_process = subprocess.Popen(
             ["echo", tts], stdout=subprocess.PIPE
