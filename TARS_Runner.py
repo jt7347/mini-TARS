@@ -19,25 +19,29 @@ class TARS_Runner:
         # handle action here
         if content == "step forward":
             tts = "Taking a step forward."
-            print("TARS: ", tts)
-            self.speech.tts_piper(tts)
+            console = tts
+            self.speech.tts_piper(tts.lower())
+            print("TARS: ", console)
             self.abstractor.stepForward()
         elif content == "turn left":
             tts = "Turning left."
-            print("TARS: ", tts)
-            self.speech.tts_piper(tts)
+            console = tts
+            self.speech.tts_piper(tts.lower())
+            print("TARS: ", console)
             self.abstractor.turnLeft()
         elif content == "turn right":
             tts = "Turning right."
-            print("TARS: ", tts)
-            self.speech.tts_piper(tts)
+            console = tts
+            self.speech.tts_piper(tts.lower())
+            print("TARS: ", console)
             self.abstractor.turnRight()
         else:
             tts = content # default if no command is recognized
             tts = self.speech.remove_linebreak(tts)
-            print("TARS: ", tts)
+            console = tts
             tts = self.speech.format(tts)
             self.speech.tts_piper(tts)
+            print("TARS: ", console)
 
     def start(self):
         while True:

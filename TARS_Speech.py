@@ -113,7 +113,8 @@ class TARS_Speech:
             try:
                 prompt = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
                 if "TARS" in prompt:
-                    print("Input: ", prompt)
+                    console = prompt.upper()
+                    print("Input: ", console)
                     action = self.command_reference(prompt)
                     return action  # action can be nonetype
 
