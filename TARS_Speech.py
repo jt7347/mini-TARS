@@ -164,6 +164,8 @@ class TARS_Speech:
         return tts.strip()
 
     def format(self, tts):
+        tts = re.sub(r'"', '', tts)
+        tts = re.sub(r'\*.*?\*', '', tts).strip()
         return re.sub(r'\.\s*', '.\n', tts).strip().lower()
 
 def main():
