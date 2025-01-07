@@ -22,8 +22,8 @@ class TARS_Speech:
         # wakeword attributes
         self.active = True
         self.wakeword = "TARS"
-        self.last_active = time.time() - 10 # last active time, initialize to boot time - 10 seconds to force standby
-        self.sleep_time = 10 # seconds
+        self.last_active = time.time() - 20 # last active time, initialize to boot time - 10 seconds to force standby
+        self.sleep_time = 20 # seconds
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
