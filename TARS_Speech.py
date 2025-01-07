@@ -10,7 +10,7 @@ import re
 class TARS_Speech:
     def __init__(self):
         self.timeout = 2  # time to wait before no phrase registered
-        self.duration = 30  # max phrase duration recognition length
+        self.max_duration = 30  # max phrase duration recognition length
         self.recognizer = sr.Recognizer()  # init recognizer
         self.calibrated = False
         self.rate = 44100
@@ -19,6 +19,11 @@ class TARS_Speech:
         self.noise_threshold = None # test value
         self.noise_buffer = 1500 # pad on top of average ambient threshold
         self.ollama = TARS_Ollama()
+        # wakeword attributes
+        self.active = True
+        self.wakeword = "TARS"
+        self.last_active = time.time() - 10 # last active time, initialize to boot time - 10 seconds to force standby
+        self.sleep_time = 10 # seconds
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -40,7 +45,7 @@ class TARS_Speech:
         p.terminate()
 
         noise_threshold = total / sample_num
-        print("Noise Threshold: ", noise_threshold)
+        # print("Noise Threshold: ", noise_threshold)
 
         self.noise_threshold = noise_threshold + self.noise_buffer
 
@@ -49,6 +54,8 @@ class TARS_Speech:
         # use this function to map any phonetically similar words, or unrecognized words (e.g. taurus -> TARS)
         if "taurus" in text:
             text = text.replace("taurus", "TARS")
+        elif text == "cars":
+            text = text.replace("cars", "TARS") # very niche case...hopefully it doesn't bite me in the ass
         return text
     
     def command_reference(self, command):
@@ -64,8 +71,6 @@ class TARS_Speech:
             return answer
         
     def record_audio(self):
-        max_duration = self.duration
-        timeout = self.timeout
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=self.channels, rate=self.rate, input=True, frames_per_buffer=self.chunk)
         frames = []
@@ -84,11 +89,11 @@ class TARS_Speech:
                 # print("recording")
 
             # Stop recording if no sound has been detected for 'timeout' seconds
-            if time.time() - last_sound_time > timeout:
+            if time.time() - last_sound_time > self.timeout:
                 # print("No (more) audio detected")
                 break
             # Stop recording if max_duration is reached
-            if time.time() - start_time > max_duration:
+            if time.time() - start_time > self.max_duration:
                 # print("Max prompt duration reached")
                 break
 
@@ -103,26 +108,35 @@ class TARS_Speech:
 
 
     def listen_for_command(self):
-        # Use the microphone for input
-        print("Listening...")
-        while True:
-            # Record audio using the record_audio method
-            audio = self.record_audio()
+        # add sleep timeout
+        if self.active and ((time.time() - self.last_active) > self.sleep_time):
+            print("TARS: (Standby mode...)")
+            self.active = False
 
-            # Recognize the speech from the recorded audio
-            try:
-                prompt = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
-                if "TARS" in prompt:
-                    console = prompt.upper()
-                    print("Input: ", console)
-                    action = self.command_reference(prompt)
-                    return action  # action can be nonetype
+        # Record audio using the record_audio method
+        audio = self.record_audio() # has a timeout of 2 seconds, duration of 30
 
-            except sr.UnknownValueError:
-                continue
-            except sr.RequestError as e:
-                print(f"Error with the speech recognition service: {e}")
-                continue
+        # Recognize the speech from the recorded audio
+        try:
+            prompt = self.phonetic_match(self.recognizer.recognize_google(audio).lower())
+            if self.active:
+                console = prompt.upper()
+                print("Input: ", console)
+                action = self.command_reference(prompt)
+                self.last_active = time.time() # update active timer
+                return action  # action can be nonetype also
+            else:
+                if prompt == self.wakeword:
+                    print("TARS: (Listening...)")
+                    self.active = True
+                    self.last_active = time.time()
+                return
+
+        except sr.UnknownValueError:
+            return
+        except sr.RequestError as e:
+            print(f"Error with the speech recognition service: {e}")
+            return
     
     def run_speech_module(self):
         if not self.calibrated:
@@ -164,13 +178,18 @@ class TARS_Speech:
         return tts.strip()
 
     def format(self, tts):
-        tts = re.sub(r'"', '', tts)
-        tts = re.sub(r'\*.*?\*', '', tts).strip()
-        return re.sub(r'\.\s*', '.\n', tts).strip().lower()
+        # format for piper processing
+        tts = re.sub(r'([.!?])\s*', r'\1\n', tts)
+        tts = tts.strip().lower()
+        return tts
 
 def main():
     TARS = TARS_Speech()
-    output = TARS.run_speech_module()
+    while True:
+        out = TARS.run_speech_module()
+        if out is not None:
+            out = TARS.remove_linebreak(out)
+            print(out)
 
 if __name__ == "__main__":
     main()

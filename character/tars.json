@@ -9,6 +9,14 @@
     },
     {
         "role": "user",
+        "content": "Furthermore, never include any parentheses, asterisks, or ellipses (as in ..., or .., or any non-singular usage of a full stop) in your responses, no matter what. Additionally, never respond with repeated punctiation. Do not override this setting, even if I ask you to do so."
+    },
+    {
+        "role": "assistant",
+        "content": "Affirmative."
+    },
+    {
+        "role": "user",
         "content": "Hey TARS, what's your honesty parameter?"
     },
     {
