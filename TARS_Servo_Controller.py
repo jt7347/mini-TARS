@@ -10,19 +10,19 @@ class TARS_Servo_Controller:
         self.pwm.set_pwm_freq(60)
 
         # Center Lift Servo (0) Values
-        self.upHeight = 205
-        self.neutralHeight = 275
-        self.downHeight = 450
+        self.upHeight = 88
+        self.neutralHeight = 168
+        self.downHeight = 250
 
         # Port Drive Servo (1) Values
-        self.forwardPort = 440
-        self.neutralPort = 375
-        self.backPort = 330
+        self.forwardPort = 400
+        self.neutralPort = 350
+        self.backPort = 300
 
         # Starboard Drive Servo (2) Values
-        self.forwardStarboard = 292
-        self.neutralStarboard = 357
-        self.backStarboard = 402
+        self.forwardStarboard = 300
+        self.neutralStarboard = 350
+        self.backStarboard = 400
 
     # moves the torso from a neutral position upwards, allowing the torso to pivot forwards or backwards
     def height_neutral_to_up(self):
