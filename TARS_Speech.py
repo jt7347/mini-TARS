@@ -5,6 +5,7 @@ import numpy as np
 import subprocess
 from TARS_Ollama import TARS_Ollama
 import re
+import json
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech:
@@ -24,6 +25,8 @@ class TARS_Speech:
         self.wakeword = "TARS"
         self.last_active = time.time() - 20 # last active time, initialize to boot time - 10 seconds to force standby
         self.sleep_time = 20 # seconds
+        self.pre_compute = json.load(open("character/pre_compute.json"))
+
 
     def calibrate_microphone(self):
         # calibrate for ambient noise
@@ -146,30 +149,33 @@ class TARS_Speech:
         return prompt
     
     def tts_piper(self, tts):
-        # First process: echo 'text here'
         print("TARS: (Generating audio...)")
         
-        echo_process = subprocess.Popen(
-            ["echo", tts], stdout=subprocess.PIPE
-        )
+        # use pre_computed audio files if they exist, otherwise generate
+        if tts in self.pre_compute:
+            subprocess.run(["aplay", "-r", "22050", "-f", "S16_LE", self.pre_compute[tts]])
+        else:
+            echo_process = subprocess.Popen(
+                ["echo", tts], stdout=subprocess.PIPE
+            )
 
-        # Second process: piper
-        piper_process = subprocess.Popen(
-            ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
-            stdin=echo_process.stdout,
-            stdout=subprocess.PIPE
-        )
+            # Second process: piper
+            piper_process = subprocess.Popen(
+                ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
+                stdin=echo_process.stdout,
+                stdout=subprocess.PIPE
+            )
 
-        # Third process: aplay
-        aplay_process = subprocess.Popen(
-            ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
-            stdin=piper_process.stdout
-        )
+            # Third process: aplay
+            aplay_process = subprocess.Popen(
+                ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
+                stdin=piper_process.stdout
+            )
 
-        # Wait for all processes to finish
-        echo_process.stdout.close()
-        piper_process.stdout.close()
-        aplay_process.wait()
+            # Wait for all processes to finish
+            echo_process.stdout.close()
+            piper_process.stdout.close()
+            aplay_process.wait()
     
     def remove_linebreak(self, tts):
         tts = tts.replace("\n", " ")
