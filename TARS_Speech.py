@@ -150,32 +150,33 @@ class TARS_Speech:
     
     def tts_piper(self, tts):
         print("TARS: (Generating audio...)")
-        
-        # use pre_computed audio files if they exist, otherwise generate
+
+        # Check for pre-computed audio
         if tts in self.pre_compute:
             subprocess.run(["aplay", "-r", "22050", "-f", "S16_LE", self.pre_compute[tts]])
-        else:
-            echo_process = subprocess.Popen(
-                ["echo", tts], stdout=subprocess.PIPE
-            )
+            return
 
-            # Second process: piper
+        # Simplified subprocess pipeline
+        try:
+            # Directly pass tts to Piper and pipe output to aplay
             piper_process = subprocess.Popen(
                 ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
-                stdin=echo_process.stdout,
-                stdout=subprocess.PIPE
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
-
-            # Third process: aplay
             aplay_process = subprocess.Popen(
                 ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
                 stdin=piper_process.stdout
             )
 
-            # Wait for all processes to finish
-            echo_process.stdout.close()
-            piper_process.stdout.close()
+            # Write the text to Piper directly
+            piper_process.stdin.write(tts.encode())
+            piper_process.stdin.close()
+
+            # Wait for aplay to finish
             aplay_process.wait()
+            
+        except Exception as e:
+            print(f"Error during TTS generation: {e}")
     
     def remove_linebreak(self, tts):
         tts = tts.replace("\n", " ")
