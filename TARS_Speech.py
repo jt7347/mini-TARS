@@ -154,6 +154,8 @@ class TARS_Speech:
         # Check for pre-computed audio
         if tts in self.pre_compute:
             subprocess.run(["aplay", "-r", "22050", "-f", "S16_LE", self.pre_compute[tts]])
+            # reset last_active to account for speech synthesis time
+            self.last_active = time.time()
             return
 
         # Simplified subprocess pipeline
@@ -174,6 +176,9 @@ class TARS_Speech:
 
             # Wait for aplay to finish
             aplay_process.wait()
+
+            # reset last_active to account for speech synthesis time
+            self.last_active = time.time()
             
         except Exception as e:
             print(f"Error during TTS generation: {e}")
