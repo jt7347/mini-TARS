@@ -127,7 +127,6 @@ class TARS_Speech:
             return
 
         try:
-
             # Write text to the preloaded Piper process
             self.piper_process.stdin.write((tts + '\n').encode())
             self.piper_process.stdin.flush()
@@ -135,26 +134,13 @@ class TARS_Speech:
             # Continuously stream Piper's audio output to aplay
             aplay_process = subprocess.Popen(
                 ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw"],
-                stdin=subprocess.PIPE
+                stdin=self.piper_process.stdout
             )
 
-            while True:
-                # Read from Piper's output
-                data = self.piper_process.stdout.read(1024)  # Read in chunks
-                if data:
-                    # Write to aplay's stdin
-                    aplay_process.stdin.write(data)
-                    aplay_process.stdin.flush()
-                else:
-                    # If no data, break (this could be replaced with a signal check)
-                    break
-            
             # Close aplay's input to signal EOF
-            print("done with reading")
             aplay_process.stdin.close()
-                    
+            
             aplay_process.wait()
-            print("done")
 
             # Reset last_active to account for speech synthesis time
             self.last_active = time.time()
