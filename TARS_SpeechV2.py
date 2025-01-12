@@ -147,6 +147,18 @@ class TARS_Speech:
 
         except Exception as e:
             print(f"Error during TTS generation: {e}")
+    
+    def remove_linebreak(self, tts):
+        tts = tts.replace("\n", " ")
+        # Replace multiple spaces with a single space
+        tts = " ".join(tts.split())
+        return tts.strip()
+
+    def format(self, tts):
+        # format for piper processing
+        tts = re.sub(r'([.!?])\s*', r'\1\n', tts)
+        tts = tts.strip().lower()
+        return tts
 
 def main():
     TARS = TARS_Speech()
