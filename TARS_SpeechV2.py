@@ -132,6 +132,12 @@ class TARS_Speech:
             self.piper_process.stdin.write((tts + '\n').encode())
             self.piper_process.stdin.flush()
 
+            # Continuously stream Piper's audio output to aplay
+            aplay_process = subprocess.Popen(
+                ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw"],
+                stdin=subprocess.PIPE
+            )
+
             while True:
                 # Read from Piper's output
                 data = self.piper_process.stdout.read(1024)  # Read in chunks
@@ -142,12 +148,6 @@ class TARS_Speech:
                 else:
                     # If no data, break (this could be replaced with a signal check)
                     break
-
-            # Continuously stream Piper's audio output to aplay
-            aplay_process = subprocess.Popen(
-                ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw"],
-                stdin=subprocess.PIPE
-            )
                     
             aplay_process.wait()
 
