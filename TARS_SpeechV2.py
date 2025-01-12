@@ -138,9 +138,11 @@ class TARS_Speech:
             )
 
             # Close aplay's input to signal EOF
-            aplay_process.stdin.close()
+            print("waiting for speech finish")
             
             aplay_process.wait()
+
+            print("finished")
 
             # Reset last_active to account for speech synthesis time
             self.last_active = time.time()
