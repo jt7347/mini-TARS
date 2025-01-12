@@ -1,5 +1,5 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
-from TARS_Speech import TARS_Speech
+from TARS_SpeechV2 import TARS_Speech
 
 class TARS_Runner:
     def __init__(self):
