@@ -148,8 +148,13 @@ class TARS_Speech:
                 else:
                     # If no data, break (this could be replaced with a signal check)
                     break
+            
+            # Close aplay's input to signal EOF
+            print("done with reading")
+            aplay_process.stdin.close()
                     
             aplay_process.wait()
+            print("done")
 
             # Reset last_active to account for speech synthesis time
             self.last_active = time.time()
