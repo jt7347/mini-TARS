@@ -1,10 +1,10 @@
-from TARS_Servo_Abstractor import TARS_Servo_Abstractor
+# from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_SpeechV2 import TARS_Speech
 
 class TARS_Runner:
     def __init__(self):
-        self.abstractor = TARS_Servo_Abstractor()
-        self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
+        # self.abstractor = TARS_Servo_Abstractor()
+        # self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
         self.speech = TARS_Speech()
 
         # Reset drive and center lift servos
@@ -22,19 +22,19 @@ class TARS_Runner:
             console = tts
             self.speech.tts_piper(tts.lower())
             print("TARS: ", console)
-            self.abstractor.stepForward()
+            # self.abstractor.stepForward()
         elif content == "turn left":
             tts = "Turning left."
             console = tts
             self.speech.tts_piper(tts.lower())
             print("TARS: ", console)
-            self.abstractor.turnLeft()
+            # self.abstractor.turnLeft()
         elif content == "turn right":
             tts = "Turning right."
             console = tts
             self.speech.tts_piper(tts.lower())
             print("TARS: ", console)
-            self.abstractor.turnRight()
+            # self.abstractor.turnRight()
         else:
             tts = content # default if no command is recognized
             tts = self.speech.remove_linebreak(tts)
