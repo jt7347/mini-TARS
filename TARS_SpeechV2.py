@@ -120,35 +120,38 @@ class TARS_Speech:
     def tts_piper(self, tts):
         print("TARS: (Generating audio...)")
 
+        # Check for pre-computed audio
         if tts in self.pre_compute:
             subprocess.run(["aplay", "-r", "22050", "-f", "S16_LE", self.pre_compute[tts]])
             self.last_active = time.time()
             return
 
         try:
+            # Write text to the preloaded Piper process
             self.piper_process.stdin.write((tts + '\n').encode())
             self.piper_process.stdin.flush()
 
+            # Continuously stream Piper's audio output to aplay
             aplay_process = subprocess.Popen(
-                ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
-                stdin=self.piper_process.stdout
+                ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw"],
+                stdin=subprocess.PIPE
             )
+
+            # Read Piper's audio output and feed it to aplay
+            while True:
+                audio_chunk = self.piper_process.stdout.read(1024)  # Read in chunks
+                if not audio_chunk:  # Break when no more audio is generated
+                    break
+                aplay_process.stdin.write(audio_chunk)
+
+            aplay_process.stdin.close()
             aplay_process.wait()
 
+            # Reset last_active to account for speech synthesis time
             self.last_active = time.time()
+
         except Exception as e:
             print(f"Error during TTS generation: {e}")
-
-    def remove_linebreak(self, tts):
-        return " ".join(tts.replace("\n", " ").split()).strip()
-
-    def format(self, tts):
-        return re.sub(r'([.!?])\s*', r'\1\n', tts.strip().lower())
-
-    def __del__(self):
-        if self.piper_process:
-            self.piper_process.terminate()
-            self.piper_process.wait()
 
 def main():
     TARS = TARS_Speech()
