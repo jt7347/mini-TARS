@@ -26,6 +26,11 @@ class TARS_Speech:
         self.last_active = time.time() - 20 # last active time, initialize to boot time - 10 seconds to force standby
         self.sleep_time = 20 # seconds
         self.pre_compute = json.load(open("character/pre_compute.json"))
+        # Preload Piper process for faster TTS
+        self.piper_process = subprocess.Popen(
+            ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE
+        )
 
 
     def calibrate_microphone(self):
@@ -161,21 +166,23 @@ class TARS_Speech:
         # Simplified subprocess pipeline
         try:
             # Directly pass tts to Piper and pipe output to aplay
-            piper_process = subprocess.Popen(
-                ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE
-            )
             aplay_process = subprocess.Popen(
                 ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
-                stdin=piper_process.stdout
+                stdin=self.piper_process.stdout
             )
 
             # Write the text to Piper directly
-            piper_process.stdin.write(tts.encode())
-            piper_process.stdin.close()
+            self.piper_process.stdin.write(tts.encode())
+            self.piper_process.stdin.close()
 
             # Wait for aplay to finish
             aplay_process.wait()
+
+            # reload the piper process to speed up a little for next time
+            self.piper_process = subprocess.Popen(
+                ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE
+            )
 
             # reset last_active to account for speech synthesis time
             self.last_active = time.time()
