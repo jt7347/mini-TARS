@@ -2,7 +2,7 @@ import sys, time
 
 class Console:
     def __init__(self):
-        self.text_speed = 0.03
+        self.text_freq = 0.03
         self.frame_rate = 0.1
 
     def print(self, string):
@@ -10,7 +10,7 @@ class Console:
             # these two lines prevent python from including a new line after every >    
             sys.stdout.write(char)
             sys.stdout.flush()
-            time.sleep(0.03)
+            time.sleep(self.text_freq)
         sys.stdout.write('\n')
 
 # animation = "|/-\\"

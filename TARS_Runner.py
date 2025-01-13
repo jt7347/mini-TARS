@@ -1,6 +1,6 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_Speech import TARS_Speech
-from console import Console
+from console_module import Console
 from threading import Thread
 
 class TARS_Runner:
@@ -8,7 +8,7 @@ class TARS_Runner:
         self.abstractor = TARS_Servo_Abstractor()
         self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
         self.speech = TARS_Speech()
-        self.console = Console()
+        self.console_module = Console()
 
         # Reset drive and center lift servos
         # self.controller.pwm.set_pwm(0, 0, self.controller.<VAL_HERE>) # VAL = ___
@@ -23,52 +23,43 @@ class TARS_Runner:
         if content == "step forward":
             tts = "Taking a step forward."
             console = tts
-            audio_thread = Thread(target=self.speech.tts_piper, args=(tts.lower()))
-            text_thread = Thread(target=self.console.print, args=("TARS: ", console))
+            audio_thread = Thread(target=self.speech.tts_piper, args=(tts.lower(), ))
+            text_thread = Thread(target=self.console_module.print, args=(("TARS: ", console), ))
             # Start both threads
             audio_thread.start()
             text_thread.start()
-            # Wait for both threads to complete
-            audio_thread.join()
-            text_thread.join()
+            # Control action
             self.abstractor.stepForward()
         elif content == "turn left":
             tts = "Turning left."
             console = tts
-            audio_thread = Thread(target=self.speech.tts_piper, args=(tts.lower()))
-            text_thread = Thread(target=self.console.print, args=("TARS: ", console))
+            audio_thread = Thread(target=self.speech.tts_piper, args=(tts.lower(), ))
+            text_thread = Thread(target=self.console_module.print, args=(("TARS: ", console), ))
             # Start both threads
             audio_thread.start()
             text_thread.start()
-            # Wait for both threads to complete
-            audio_thread.join()
-            text_thread.join()
+            # Control action
             self.abstractor.turnLeft()
         elif content == "turn right":
             tts = "Turning right."
             console = tts
-            audio_thread = Thread(target=self.speech.tts_piper, args=(tts.lower()))
-            text_thread = Thread(target=self.console.print, args=("TARS: ", console))
+            audio_thread = Thread(target=self.speech.tts_piper, args=(tts.lower(), ))
+            text_thread = Thread(target=self.console_module.print, args=(("TARS: ", console), ))
             # Start both threads
             audio_thread.start()
             text_thread.start()
-            # Wait for both threads to complete
-            audio_thread.join()
-            text_thread.join()
+            # Control action
             self.abstractor.turnRight()
         else:
             tts = content # default if no command is recognized
             tts = self.speech.remove_linebreak(tts)
             console = tts
             tts = self.speech.format(tts)
-            audio_thread = Thread(target=self.speech.tts_piper, args=tts)
-            text_thread = Thread(target=self.console.print, args=("TARS: ", console))
+            audio_thread = Thread(target=self.speech.tts_piper, args=(tts, ))
+            text_thread = Thread(target=self.console_module.print, args=(("TARS: ", console), ))
             # Start both threads
             audio_thread.start()
             text_thread.start()
-            # Wait for both threads to complete
-            audio_thread.join()
-            text_thread.join()
 
     def start(self):
         while True:
