@@ -1,4 +1,5 @@
 import speech_recognition as sr
+from piper.voice import PiperVoice
 import pyaudio
 import time
 import numpy as np
@@ -27,10 +28,7 @@ class TARS_Speech:
         self.sleep_time = 20 # seconds
         self.pre_compute = json.load(open("character/pre_compute.json"))
         # Preload Piper process for faster TTS
-        self.piper_process = subprocess.Popen(
-            ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE
-        )
+        self.piper = PiperVoice.load("voice_models/TARS.onnx")
 
 
     def calibrate_microphone(self):
@@ -165,24 +163,23 @@ class TARS_Speech:
 
         # Simplified subprocess pipeline
         try:
-            # Directly pass tts to Piper and pipe output to aplay
+            # Generate piper raw stream
+            audio_stream = self.piper.synthesize_stream_raw(tts)
+            
+            # Create aplay subprocess
             aplay_process = subprocess.Popen(
                 ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
-                stdin=self.piper_process.stdout
+                stdin=subprocess.PIPE
             )
 
-            # Write the text to Piper directly
-            self.piper_process.stdin.write(tts.encode())
-            self.piper_process.stdin.close()
+            # Feed audio stream into aplay process
+            for chunk in audio_stream:
+                aplay_process.stdin.write(chunk)
+            # close stdin to signal input completion
+            aplay_process.stdin.close()
 
             # Wait for aplay to finish
             aplay_process.wait()
-
-            # reload the piper process to speed up a little for next time
-            self.piper_process = subprocess.Popen(
-                ["piper", "--model", "voice_models/TARS.onnx", "--output-raw"],
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE
-            )
 
             # reset last_active to account for speech synthesis time
             self.last_active = time.time()
