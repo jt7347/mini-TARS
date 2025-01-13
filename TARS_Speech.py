@@ -153,7 +153,7 @@ class TARS_Speech:
         return prompt
     
     def tts_piper(self, tts):
-        print("TARS: (Generating audio...)")
+        # print("TARS: (Generating audio...)")
 
         # Check for pre-computed audio
         if tts in self.pre_compute:
