@@ -134,6 +134,7 @@ class TARS_Speech:
             else:
                 if prompt == self.wakeword:
                     print("TARS: (Listening...)")
+                    self.tts_piper("listening...")
                     self.active = True
                     self.last_active = time.time()
                 return
