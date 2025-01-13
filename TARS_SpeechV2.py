@@ -168,8 +168,12 @@ class TARS_Speech:
             # Directly pass tts to Piper and pipe output to aplay
             aplay_process = subprocess.Popen(
                 ["aplay", "-r", "22050", "-f", "S16_LE", "-t", "raw", "-"],
-                stdin=audio_stream
+                stdin=subprocess.PIPE
             )
+
+            for chunk in audio_stream:
+                aplay_process.stdin.write(chunk)
+            aplay_process.stdin.close()
 
             # Wait for aplay to finish
             aplay_process.wait()
