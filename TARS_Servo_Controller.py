@@ -11,8 +11,8 @@ class TARS_Servo_Controller:
 
         # Center Lift Servo (0) Values
         self.upHeight = 88
-        self.neutralHeight = 168
-        self.downHeight = 250
+        self.neutralHeight = 164
+        self.downHeight = 246
 
         # Port Drive Servo (1) Values
         self.forwardPort = 400
