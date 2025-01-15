@@ -40,7 +40,6 @@ class TARS_Runner:
             tts = self.speech.remove_linebreak(tts)
             console = tts
             tts = self.speech.format(tts)
-            print("passed to piper:", tts)
             self.speech.tts_piper(tts)
             print("TARS: ", console)
         
