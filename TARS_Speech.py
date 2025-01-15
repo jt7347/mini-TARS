@@ -160,10 +160,7 @@ class TARS_Speech:
         # Check for pre-computed audio
         if tts in self.pre_compute:
             if tts == "(playing secret...)":
-                aplay_process = subprocess.Popen(
-                    ["aplay", self.pre_compute[tts]]
-                )
-                aplay_process.wait()
+                subprocess.run(["aplay", self.pre_compute[tts]])
             else:
                 subprocess.run(["aplay", "-r", "22050", "-f", "S16_LE", self.pre_compute[tts]])
             # reset last_active to account for speech synthesis time
