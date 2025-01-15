@@ -73,7 +73,7 @@ class TARS_Speech:
         elif "turn right" in command:
             return "turn right"
         elif command == "play secret":
-            return "(Playing secret...)"
+            return "Playing secret..."
         else:
             answer = self.ollama.ask_question(command)
             return answer
@@ -159,7 +159,7 @@ class TARS_Speech:
 
         # Check for pre-computed audio
         if tts in self.pre_compute:
-            if tts == "(playing secret...)":
+            if tts == "playing secret...":
                 subprocess.run(["aplay", self.pre_compute[tts]])
             else:
                 subprocess.run(["aplay", "-r", "22050", "-f", "S16_LE", self.pre_compute[tts]])
