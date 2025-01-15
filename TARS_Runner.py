@@ -42,6 +42,9 @@ class TARS_Runner:
             tts = self.speech.format(tts)
             self.speech.tts_piper(tts)
             print("TARS: ", console)
+        
+        # Print TARS listening state after action completion
+        print("TARS: (Listening...)")
 
     def start(self):
         while True:
