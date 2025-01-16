@@ -190,7 +190,7 @@ class TARS_Servo_Controller:
             time.sleep(0.001)
 
 
-    def turn_right(self):
+    def turn_left(self):
         port = self.neutralPort
         starboard = self.neutralStarboard
         while (port < self.forwardPort):
@@ -200,7 +200,7 @@ class TARS_Servo_Controller:
             self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.001)
             
-    def turn_left(self):
+    def turn_right(self):
         port = self.neutralPort
         starboard = self.neutralStarboard
         while (port > self.backPort):
@@ -210,7 +210,7 @@ class TARS_Servo_Controller:
             self.pwm.set_pwm(5, 5, starboard)
             time.sleep(0.001)
             
-    def neutral_from_right(self):
+    def neutral_from_left(self):
         port = self.forwardPort
         starboard = self.backStarboard
         while (port > self.neutralPort):
@@ -222,7 +222,7 @@ class TARS_Servo_Controller:
         self.pwm.set_pwm(4, 4, self.neutralPort)
         self.pwm.set_pwm(5, 5, self.neutralStarboard)
             
-    def neutral_from_left(self):
+    def neutral_from_right(self):
         port = self.backPort
         starboard = self.forwardStarboard
         while (port < self.neutralPort):
