@@ -15,14 +15,14 @@ class TARS_Servo_Controller:
         self.downHeight = 246
 
         # Port Drive Servo (1) Values
-        self.forwardPort = 400
+        self.forwardPort = 425
         self.neutralPort = 350
-        self.backPort = 300
+        self.backPort = 275
 
         # Starboard Drive Servo (2) Values
-        self.forwardStarboard = 300
+        self.forwardStarboard = 275
         self.neutralStarboard = 350
-        self.backStarboard = 400
+        self.backStarboard = 425
 
     # moves the torso from a neutral position upwards, allowing the torso to pivot forwards or backwards
     def height_neutral_to_up(self):
