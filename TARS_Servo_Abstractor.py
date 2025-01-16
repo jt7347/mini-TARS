@@ -11,13 +11,13 @@ class TARS_Servo_Abstractor:
 		self.controller.torso_bump()
 		self.controller.torso_return()
 
-	def turnRight(self):
+	def turnLeft(self):
 		self.controller.neutral_to_down()
 		self.controller.turn_right()
 		self.controller.down_to_neutral()
 		self.controller.neutral_from_right()
 
-	def turnLeft(self):
+	def turnRight(self):
 		self.controller.neutral_to_down()
 		self.controller.turn_left()
 		self.controller.down_to_neutral()
