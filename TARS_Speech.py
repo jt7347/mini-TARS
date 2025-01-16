@@ -23,7 +23,7 @@ class TARS_Speech:
         self.ollama = TARS_Ollama()
         # wakeword attributes
         self.active = True
-        self.wakeword = "TARS"
+        self.wakeword = ["TARS", "hey TARS"]
         self.last_active = time.time() - 20 # last active time, initialize to boot time - 10 seconds to force standby
         self.sleep_time = 20 # seconds
         self.pre_compute = json.load(open("character/pre_compute.json"))
@@ -134,7 +134,7 @@ class TARS_Speech:
                 self.last_active = time.time() # update active timer
                 return action  # action can be nonetype also
             else:
-                if prompt == self.wakeword:
+                if prompt in self.wakeword:
                     print("TARS: (Listening...)")
                     self.tts_piper("listening...")
                     self.active = True
