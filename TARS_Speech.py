@@ -60,8 +60,11 @@ class TARS_Speech:
         # use this function to map any phonetically similar words, or unrecognized words (e.g. taurus -> TARS)
         if "taurus" in text:
             text = text.replace("taurus", "TARS")
+        # very niche cases...hopefully it doesn't bite me in the ass
         elif text == "cars":
-            text = text.replace("cars", "TARS") # very niche case...hopefully it doesn't bite me in the ass
+            text = text.replace("cars", "TARS")
+        elif text == "tires":
+            text = text.replace("tires", "TARS")
         return text
     
     def command_reference(self, command):
