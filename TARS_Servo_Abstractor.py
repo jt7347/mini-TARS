@@ -26,11 +26,11 @@ class TARS_Servo_Abstractor:
 def main():
 	TARS = TARS_Servo_Abstractor()
 	TARS.stepForward()
-	time.sleep(1)
-	TARS.turnLeft()
-	time.sleep(1)
-	TARS.turnRight
-	time.sleep(1)
+	# time.sleep(1)
+	# TARS.turnLeft()
+	# time.sleep(1)
+	# TARS.turnRight
+	# time.sleep(1)
 
 if __name__ == "__main__":
 	main()
