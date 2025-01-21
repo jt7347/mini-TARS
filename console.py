@@ -32,7 +32,7 @@ class Console:
             for art in ascii_art_list:
                 self.clear_screen()
                 print(art)
-                time.sleep(1 / self.fps)  # Wait for 1 second before showing the next piece of art
+                time.sleep(1 / self.fps)  # Wait for 1/fps seconds
 
 # Example usage:
 if __name__ == "__main__":
