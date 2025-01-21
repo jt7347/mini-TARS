@@ -1,6 +1,7 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_Speech import TARS_Speech
-
+from threading import Thread
+import console
 class TARS_Runner:
     def __init__(self):
         self.abstractor = TARS_Servo_Abstractor()
@@ -50,7 +51,13 @@ class TARS_Runner:
                 self.handle_action(self.queue)
 
 def main():
+    console = console.Console()
+    thread = Thread(target=console.bootup_animation)
+    thread.start()
     TARS = TARS_Runner()
+    load_stat = True
+    thread.join()
+    console.clear_screen()
     TARS.start()
 
 if __name__ == "__main__":
