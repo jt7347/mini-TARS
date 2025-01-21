@@ -2,11 +2,12 @@
 import os
 import time
 
-# Define global variables
+# global variables
 load_stat = False
+
 class Console:
     def __init__(self):
-        self.fps = 2.5
+        self.fps = 2
 
     # Function to clear the terminal screen
     def clear_screen(self):
@@ -19,9 +20,6 @@ class Console:
             art_data = file.read().split('break')
             # Strip each piece of art to remove unnecessary newlines or spaces
             return [art.strip() for art in art_data]
-        
-    def get_stat(self, bool):
-        return bool
     
     def bootup_animation(self):
         # Load ASCII art from the text file
@@ -31,6 +29,5 @@ class Console:
         while not load_stat:
             for art in ascii_art_list:
                 self.clear_screen()
-                print(art, end="")
-                time.sleep(1 / self.fps)  # Wait for 1/fps seconds
-                
+                print(art)
+                time.sleep(1 / self.fps)  # Wait for 1 second before showing the next piece of art
