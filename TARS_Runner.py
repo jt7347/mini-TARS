@@ -1,28 +1,6 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_Speech import TARS_Speech
-from threading import Thread
-import console
 
-# # global definitions
-# load_stat = False
-
-# def clear_screen():
-#     os.system('cls' if os.name == 'nt' else 'clear')
-
-# def bootup_animation():
-#     with open('TARS_ASCII_ART.txt', 'r') as file:
-#         # Read the content of the file and split it by the 'break' delimiter
-#         art_data = file.read().split('break')
-#         # Strip each piece of art to remove unnecessary newlines or spaces
-#         ascii_art_list = [art.strip() for art in art_data]
-
-#         # Main loop to cycle through the ASCII art
-#         while not load_stat:
-#             for art in ascii_art_list:
-#                 clear_screen()
-#                 print(art, end="")
-#                 time.sleep(1 / 2.5)  # FPS = 2.5
-#         clear_screen()
 class TARS_Runner:
     def __init__(self):
         self.abstractor = TARS_Servo_Abstractor()
@@ -72,14 +50,7 @@ class TARS_Runner:
                 self.handle_action(self.queue)
 
 def main():
-    global load_stat
-    main_console = console.Console()
-    thread = Thread(target=main_console.bootup_animation)
-    thread.start()
     TARS = TARS_Runner()
-    load_stat = True
-    thread.join()
-    main_console.clear_screen()
     TARS.start()
 
 if __name__ == "__main__":
