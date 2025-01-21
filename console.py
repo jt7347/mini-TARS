@@ -9,7 +9,7 @@ status = None
 
 class Console:
     def __init__(self):
-        self.fps = 2
+        self.fps = 2.5
 
     # Function to clear the terminal screen
     def clear_screen(self):
@@ -31,7 +31,7 @@ class Console:
         while status is None:
             for art in ascii_art_list:
                 self.clear_screen()
-                print(art)
+                print(art, end="")
                 time.sleep(1 / self.fps)  # Wait for 1/fps seconds
 
 # Example usage:
