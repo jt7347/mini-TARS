@@ -4,7 +4,7 @@ import json
 class TARS_Ollama:
     def __init__(self):
         # URL for the Ollama API
-        self.url = "http://10.0.0.39:11434/api/chat"  # Replace with the correct IP
+        self.url = "http://172.20.10.4:11434/api/chat"  # Replace with the correct IP
         self.messages = json.load(open("character/tars.json"))
 
     # Function to ask a question and get a response
