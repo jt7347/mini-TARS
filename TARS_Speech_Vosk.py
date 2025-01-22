@@ -14,7 +14,7 @@ class TARS_Speech:
         self.timeout = 2  # time to wait before no phrase registered
         self.max_duration = 30  # max phrase duration recognition length
         self.calibrated = False
-        self.rate = 44100
+        self.rate = 16000
         self.chunk = 1024
         self.channels = 1
         self.noise_threshold = None # test value
@@ -30,7 +30,7 @@ class TARS_Speech:
         self.piper = PiperVoice.load("voice_models/TARS.onnx")
         
         # Initialize Vosk recognizer
-        self.model = vosk.Model("vosk_model")
+        self.model = vosk.Model("vosk-model-small-en-us-0.15")
         self.recognizer = vosk.KaldiRecognizer(self.model, self.rate)
 
     def calibrate_microphone(self):
@@ -133,6 +133,8 @@ class TARS_Speech:
             if self.recognizer.AcceptWaveform(audio_data):
                 result = json.loads(self.recognizer.Result())
                 prompt = self.phonetic_match(result.get("text", "").lower())
+                if prompt == "":
+                    return
                 print(prompt)
                 if self.active:
                     console = prompt.upper()
