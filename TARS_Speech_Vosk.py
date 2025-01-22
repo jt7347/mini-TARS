@@ -66,6 +66,8 @@ class TARS_Speech:
             text = text.replace("cars", "TARS")
         elif text == "tires":
             text = text.replace("tires", "TARS")
+        elif "tars" in text:
+            text = text.replace("tars", "TARS")
         return text
     
     def command_reference(self, command):
