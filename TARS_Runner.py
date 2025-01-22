@@ -1,11 +1,11 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
-from TARS_Speech import TARS_Speech
+from TARS_Speech_Vosk import TARS_Speech_Vosk
 
 class TARS_Runner:
     def __init__(self):
         self.abstractor = TARS_Servo_Abstractor()
         self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
-        self.speech = TARS_Speech()
+        self.speech = TARS_Speech_Vosk()
 
         # Reset drive and center lift servos
         # self.controller.pwm.set_pwm(0, 0, self.controller.<VAL_HERE>) # VAL = ___

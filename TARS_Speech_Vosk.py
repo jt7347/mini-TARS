@@ -9,7 +9,7 @@ from piper.voice import PiperVoice
 from TARS_Ollama import TARS_Ollama
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
-class TARS_Speech:
+class TARS_Speech_Vosk:
     def __init__(self):
         self.timeout = 2  # time to wait before no phrase registered
         self.max_duration = 30  # max phrase duration recognition length
@@ -66,8 +66,10 @@ class TARS_Speech:
             text = text.replace("cars", "TARS")
         elif text == "tires":
             text = text.replace("tires", "TARS")
+        elif text == "bars":
+            text = text.replace("tires", "TARS")
         elif "tars" in text:
-            text = text.replace("tars", "TARS")
+            text = text.replace("tars", "TARS") # final case where Kaldi recognizes tars
         return text
     
     def command_reference(self, command):
@@ -100,11 +102,11 @@ class TARS_Speech:
             # Check if the maximum amplitude exceeds the noise threshold
             if max_amplitude > self.noise_threshold:
                 last_sound_time = time.time()  # Reset the timer when sound is detected
-                print("recording")
+                # print("recording")
 
             # Stop recording if no sound has been detected for 'timeout' seconds
             if time.time() - last_sound_time > self.timeout:
-                print("No (more) audio detected")
+                # print("No (more) audio detected")
                 break
             # Stop recording if max_duration is reached
             if time.time() - start_time > self.max_duration:
@@ -133,9 +135,10 @@ class TARS_Speech:
             if self.recognizer.AcceptWaveform(audio_data):
                 result = json.loads(self.recognizer.Result())
                 prompt = self.phonetic_match(result.get("text", "").lower())
+                # return None if result is empty
                 if prompt == "":
                     return
-                print(prompt)
+                # print(prompt)
                 if self.active:
                     console = prompt.upper()
                     print("Input: ", console)
@@ -210,7 +213,7 @@ class TARS_Speech:
         return tts
 
 def main():
-    TARS = TARS_Speech()
+    TARS = TARS_Speech_Vosk()
     while True:
         out = TARS.run_speech_module()
         # if out is not None:
