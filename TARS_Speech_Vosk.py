@@ -59,16 +59,8 @@ class TARS_Speech_Vosk:
 
     def phonetic_match(self, text):
         # use this function to map any phonetically similar words, or unrecognized words (e.g. taurus -> TARS)
-        if "taurus" in text:
-            text = text.replace("taurus", "TARS")
-        # very niche cases...hopefully it doesn't bite me in the ass
-        elif text == "cars":
-            text = text.replace("cars", "TARS")
-        elif text == "tires":
-            text = text.replace("tires", "TARS")
-        elif text == "bars":
-            text = text.replace("tires", "TARS")
-        elif "tars" in text:
+        # example (this is used to change lower case recognition to upper, but structure is the same)
+        if "tars" in text:
             text = text.replace("tars", "TARS") # final case where Kaldi recognizes tars
         return text
     
@@ -125,7 +117,8 @@ class TARS_Speech_Vosk:
         # add sleep timeout
         if self.active and ((time.time() - self.last_active) > self.sleep_time):
             print("TARS: (Standby mode...)")
-            self.recognizer = vosk.KaldiRecognizer(self.model, self.rate, json.dumps(["tars", "hey tars"]))
+            # Dynamic recognizer --> (if in sleep mode, focus on discerning wakeword phrases)
+            self.recognizer = vosk.KaldiRecognizer(self.model, self.rate, json.dumps([phrase.lower() for phrase in self.wakeword]))
             self.active = False
 
         # Record audio using the record_audio method
@@ -151,6 +144,7 @@ class TARS_Speech_Vosk:
                         print("TARS: (Listening...)")
                         self.tts_piper("listening...")
                         self.active = True
+                        # Dynamic recognizer --> (when active, go back to full vocabulary)
                         self.recognizer = vosk.KaldiRecognizer(self.model, self.rate)
                         self.last_active = time.time()
                     return
