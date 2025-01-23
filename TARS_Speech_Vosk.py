@@ -7,6 +7,7 @@ import subprocess
 import re
 from piper.voice import PiperVoice
 from TARS_Ollama import TARS_Ollama
+import sounddevice as sd
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech_Vosk:
@@ -117,6 +118,7 @@ class TARS_Speech_Vosk:
         # add sleep timeout
         if self.active and ((time.time() - self.last_active) > self.sleep_time):
             print("TARS: (Standby mode...)")
+            self.play_beep(400, 0.1, 44100, 0.6)
             # Dynamic recognizer --> (if in sleep mode, focus on discerning wakeword phrases)
             self.recognizer = vosk.KaldiRecognizer(self.model, self.rate, json.dumps([phrase.lower() for phrase in self.wakeword]))
             self.active = False
@@ -142,6 +144,7 @@ class TARS_Speech_Vosk:
                 else:
                     if prompt in self.wakeword:
                         print("TARS: (Listening...)")
+                        self.play_beep(1200, 0.1, 44100, 0.8)
                         self.tts_piper("listening...")
                         self.active = True
                         # Dynamic recognizer --> (when active, go back to full vocabulary)
@@ -207,6 +210,23 @@ class TARS_Speech_Vosk:
         tts = re.sub(r'([.!?])\s*', r'\1\n', tts)
         tts = tts.strip().lower()
         return tts
+    
+    def play_beep(self, frequency, duration, sample_rate, volume):
+        """
+        Play a system beep sound.
+        Parameters:
+        - frequency (int): Frequency of the beep in Hz (e.g., 1000 for 1kHz).
+        - duration (float): Duration of the beep in seconds.
+        - sample_rate (int): Sample rate in Hz (default: 44100).
+        - volume (float): Volume of the beep (0.0 to 1.0).
+        """
+        # Generate a sine wave
+        t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+        wave = volume * np.sin(2 * np.pi * frequency * t)
+
+        # Play the sine wave
+        sd.play(wave, samplerate=sample_rate)
+        sd.wait()  # Wait until the sound finishes playing
 
 def main():
     TARS = TARS_Speech_Vosk()
