@@ -125,6 +125,7 @@ class TARS_Speech_Vosk:
         # add sleep timeout
         if self.active and ((time.time() - self.last_active) > self.sleep_time):
             print("TARS: (Standby mode...)")
+            self.recognizer = vosk.KaldiRecognizer(self.model, self.rate, json.dumps(["tars", "hey tars"]))
             self.active = False
 
         # Record audio using the record_audio method
@@ -150,6 +151,7 @@ class TARS_Speech_Vosk:
                         print("TARS: (Listening...)")
                         self.tts_piper("listening...")
                         self.active = True
+                        self.recognizer = vosk.KaldiRecognizer(self.model, self.rate)
                         self.last_active = time.time()
                     return
 
