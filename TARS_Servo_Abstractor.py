@@ -29,7 +29,7 @@ def main():
 	# time.sleep(1)
 	# TARS.turnLeft()
 	# time.sleep(1)
-	# TARS.turnRight
+	# TARS.turnRight()
 	# time.sleep(1)
 
 if __name__ == "__main__":

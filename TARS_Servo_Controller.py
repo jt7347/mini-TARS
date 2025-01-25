@@ -12,17 +12,17 @@ class TARS_Servo_Controller:
         # Center Lift Servo (0) Values
         self.upHeight = 88
         self.neutralHeight = 164
-        self.downHeight = 256
+        self.downHeight = 276
 
         # Port Drive Servo (1) Values
-        self.forwardPort = 392
-        self.neutralPort = 342
-        self.backPort = 292
+        self.forwardPort = 410
+        self.neutralPort = 340
+        self.backPort = 270
 
         # Starboard Drive Servo (2) Values
-        self.forwardStarboard = 306
-        self.neutralStarboard = 356
-        self.backStarboard = 406
+        self.forwardStarboard = 288
+        self.neutralStarboard = 358
+        self.backStarboard = 428
 
     # moves the torso from a neutral position upwards, allowing the torso to pivot forwards or backwards
     def height_neutral_to_up(self):
@@ -71,12 +71,12 @@ class TARS_Servo_Controller:
         while (height < self.downHeight):
             height = height + 2
             self.pwm.set_pwm(3, 3, height)
-            time.sleep(0.000001)
+            time.sleep(0.00000001)
         # print('setting center servo (0) Down --> Up position FAST')
         while (height > self.upHeight):
             height = height - 1
             self.pwm.set_pwm(3, 3, height)
-            time.sleep(0.0001)
+            time.sleep(0.001)
         # print('center servo (0) returned to Up position\n')
         
     # returns the torso's vertical height and rotation to centered values from up height and forward 
