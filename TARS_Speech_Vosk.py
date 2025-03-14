@@ -12,20 +12,20 @@ import sounddevice as sd
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
 class TARS_Speech_Vosk:
     def __init__(self):
-        self.timeout = 2  # time to wait before no phrase registered
+        self.timeout = 1  # time to wait before no phrase registered
         self.max_duration = 30  # max phrase duration recognition length
         self.calibrated = False
         self.rate = 16000
         self.chunk = 1024
         self.channels = 1
         self.noise_threshold = None # test value
-        self.noise_buffer = 1500 # pad on top of average ambient threshold
+        self.noise_buffer = 1700 # pad on top of average ambient threshold
         self.ollama = TARS_Ollama()
         # wakeword attributes
         self.active = True
         self.wakeword = ["TARS", "hey TARS"]
         self.last_active = time.time() - 20 # last active time, initialize to boot time - 10 seconds to force standby
-        self.sleep_time = 20 # seconds
+        self.sleep_time = 10 # seconds
         self.pre_compute = json.load(open("character/pre_compute.json"))
         # Preload Piper process for faster TTS
         self.piper = PiperVoice.load("voice_models/TARS.onnx")
