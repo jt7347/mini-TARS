@@ -1,27 +1,32 @@
-import subprocess
+import requests
 import base64
 
-def capture_and_convert(output_image="image.jpg", output_text="image_base64.txt"):
-    # Run the libcamera-still command to capture an image
-    try:
-        subprocess.run(["libcamera-still", "-o", output_image, "--timeout", "1000"], check=True)
-        print(f"✅ Image captured and saved as {output_image}")
-    except subprocess.CalledProcessError:
-        print("❌ Error: Failed to capture image.")
-        return
+# Function to encode image to base64
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
 
-    # Convert the image to Base64
-    try:
-        with open(output_image, "rb") as img_file:
-            base64_string = base64.b64encode(img_file.read()).decode('utf-8')
 
-        # Save Base64 string to a text file
-        with open(output_text, "w") as txt_file:
-            txt_file.write(base64_string)
+# Path to your image
+image_path = "burn_out_image.jpg"
 
-        print(f"✅ Base64 string saved to {output_text}")
-    except Exception as e:
-        print(f"❌ Error: {e}")
+# Get base64 encoded image
+base64_image = encode_image(image_path)
 
-if __name__ == "__main__":
-    capture_and_convert()
+# API endpoint
+url = "http://localhost:10000/api/generate"
+
+# Payload
+payload = {
+    "model": "llama3.2-vision",
+    "prompt": "What is in this picture?",
+    "stream": False,
+    "images": [base64_image],
+}
+
+# Make the POST request
+response = requests.post(url, json=payload)
+
+# Parse and display the "response" field
+response_json = response.json()
+print(response_json.get("response", "No response found"))
