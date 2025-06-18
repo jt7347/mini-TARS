@@ -8,7 +8,7 @@ def encode_image(image_path):
 
 
 # Path to your image
-image_path = "burn_out_image.jpg"
+image_path = "image.jpg"
 
 # Get base64 encoded image
 base64_image = encode_image(image_path)
