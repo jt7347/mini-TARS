@@ -75,6 +75,8 @@ class TARS_Speech_Vosk:
             return "turn right"
         elif command == "play secret":
             return "(Playing secret)"
+        elif "tell me what you see" in command:
+            return "tell me what you see"
         else:
             answer = self.ollama.ask_question(command)
             return answer

@@ -1,11 +1,13 @@
 from TARS_Servo_Abstractor import TARS_Servo_Abstractor
 from TARS_Speech_Vosk import TARS_Speech_Vosk
+from TARS_Camera import TARS_Camera
 
 class TARS_Runner:
     def __init__(self):
         self.abstractor = TARS_Servo_Abstractor()
         self.controller = self.abstractor.controller # TARS_Servo_Abstractor already has a controller attribute
         self.speech = TARS_Speech_Vosk()
+        self.camera = TARS_Camera()
 
         # Reset drive and center lift servos
         # self.controller.pwm.set_pwm(0, 0, self.controller.<VAL_HERE>) # VAL = ___
@@ -35,6 +37,13 @@ class TARS_Runner:
             self.speech.tts_piper(tts.lower())
             print("TARS: ", console)
             self.abstractor.turnRight()
+        elif content == "tell me what you see":
+            tts = "Taking snapshot and transmitting data."
+            console = tts
+            self.speech.tts_piper(tts.lower())
+            print("TARS: ", console)
+            ret = self.camera.take_photo()
+            self.camera.send_mail()
         else:
             tts = content # default if no command is recognized
             tts = self.speech.remove_linebreak(tts)
