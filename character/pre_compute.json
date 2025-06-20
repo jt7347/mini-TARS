@@ -3,5 +3,6 @@
     "turning left.": "voice_models/pre_compute/turn_left.wav",
     "turning right.": "voice_models/pre_compute/turn_right.wav",
     "listening...": "voice_models/pre_compute/listening.wav",
-    "(playing secret)": "voice_models/pre_compute/secret.wav"
+    "(playing secret)": "voice_models/pre_compute/secret.wav",
+    "taking snapshot and transmitting data.": "voice_models/pre_compute/data_transmission.wav"
 }
