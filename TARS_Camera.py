@@ -20,7 +20,7 @@ class TARS_Camera:
     def take_photo(self):
         # Run the libcamera-still command to capture an image
         try:
-            subprocess.run(["libcamera-still", "-o", self.filename, "--timeout", "1000"], check=True)
+            subprocess.run(["libcamera-still", "-o", self.filename, "--width", "500", "--height", "500", "--timeout", "1000"], check=True)
             ret = self.encode_image(self.filename)
             return ret
         except subprocess.CalledProcessError:
