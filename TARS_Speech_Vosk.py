@@ -6,7 +6,7 @@ import numpy as np
 import subprocess
 import re
 from piper.voice import PiperVoice
-from TARS_Ollama import TARS_Ollama
+from TARS_Ollama_Vision import TARS_Ollama
 import sounddevice as sd
 
 # Structure ~ essentially, always listening for an 'activation_keyword,' in this case maybe just "TARS"?
@@ -75,6 +75,8 @@ class TARS_Speech_Vosk:
             return "turn right"
         elif command == "play secret":
             return "(Playing secret)"
+        elif "take a photo" in command:
+            return "take a photo"
         elif "tell me what you see" in command:
             return "tell me what you see"
         else:

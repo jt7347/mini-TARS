@@ -4,13 +4,13 @@ import json
 class TARS_Ollama:
     def __init__(self):
         # URL for the Ollama API
-        self.url = "http://10.0.0.39:11434/api/chat"  # Replace with the correct IP
+        self.url = "http://172.20.10.4:11434/api/chat"  # Replace with the correct IP
         self.messages = json.load(open("character/tars.json"))
 
     # Function to ask a question and get a response
     def ask_question(self, question, attachment=""):
         data = {
-            "model": "gemma3",  # Using the specified model
+            "model": "gemma3",  # Using the specified model -> gemma3 has vlm capabilities
             "messages": self.messages + 
             [{
                 "role": "user",
@@ -20,7 +20,6 @@ class TARS_Ollama:
         }
         # conditional attachment
         if attachment:
-            print("Attachment detected.")
             data["messages"][-1]["images"] = [attachment]
 
         response = requests.post(self.url, json=data)
@@ -56,11 +55,11 @@ class TARS_Ollama:
             print(f"Error: {response.status_code}")
             return None
 
-# Main function to interact with the user
+# Unit Testing
 def main():
     TARS = TARS_Ollama()
     question = "Describe this image."
-    image = ""
+    image = "" # base64 string here
     answer = TARS.ask_question(question, attachment=image)
     if answer:
         print(answer)

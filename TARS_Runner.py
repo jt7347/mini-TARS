@@ -37,13 +37,29 @@ class TARS_Runner:
             self.speech.tts_piper(tts.lower())
             print("TARS: ", console)
             self.abstractor.turnRight()
-        elif content == "tell me what you see":
+        elif content == "take a photo":
             tts = "Taking snapshot and transmitting data."
             console = tts
             self.speech.tts_piper(tts.lower())
             print("TARS: ", console)
+            # take and send photo
             ret = self.camera.take_photo()
             self.camera.send_mail()
+        elif content == "tell me what you see":
+            # initial response
+            _tts = "Roger. Analyzing surroundings..."
+            _console = _tts
+            self.speech.tts_piper(_tts.lower())
+            print("TARS: ", _console)
+            # take photo
+            ret = self.camera.take_photo()
+            # pass photo as attachment
+            answer = self.speech.ollama.ask_question(content, attachment=ret)
+            tts = self.speech.remove_linebreak(answer)
+            console = tts
+            tts = self.speech.format(tts)
+            self.speech.tts_piper(tts)
+            print("TARS: ", console)
         else:
             tts = content # default if no command is recognized
             tts = self.speech.remove_linebreak(tts)
