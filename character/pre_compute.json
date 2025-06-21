@@ -5,5 +5,5 @@
     "listening...": "voice_models/pre_compute/listening.wav",
     "(playing secret)": "voice_models/pre_compute/secret.wav",
     "taking snapshot and transmitting data.": "voice_models/pre_compute/data_transmission.wav",
-    "roger. analyzing surroundings...": "voice_models/pre_compute/scene_analysis.wav"
+    "analyzing surroundings. this will take second...": "voice_models/pre_compute/scene_analysis.wav"
 }

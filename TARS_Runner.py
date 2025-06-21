@@ -47,7 +47,7 @@ class TARS_Runner:
             self.camera.send_mail()
         elif content == "tell me what you see":
             # initial response
-            _tts = "Roger. Analyzing surroundings..."
+            _tts = "Analyzing surroundings. This will take a second..."
             _console = _tts
             self.speech.tts_piper(_tts.lower())
             print("TARS: ", _console)
